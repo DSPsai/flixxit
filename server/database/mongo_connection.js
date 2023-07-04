@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 // Connect to MongoDB Atlas
-mongoose.connect('mongodb+srv://dspsaiprudhvi007:Pass1234@cluster0.1tblibb.mongodb.net/netflix_clone', {
+mongoose.connect(process.env.ATLAS_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     name: String,
     email: String,
     password: String,
-    preferredVideoQuality: String,
+    preferredVideoQuality: String,// "720p, 360p"
     subscription: Boolean,
     recentlyWatched: [String], // Array of content IDs
     wishlist: [String], // Array of content IDs
