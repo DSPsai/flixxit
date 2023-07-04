@@ -12,7 +12,9 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
-
+#root {
+  background-color: black;
+}
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -35,4 +37,9 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+* {
+  transition: height, width 0.5s;
+  font-family: "Poppins", sans-serif;
 }

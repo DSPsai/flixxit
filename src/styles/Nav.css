@@ -1,0 +1,127 @@
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 2vh 5vh;
+  margin-bottom: -12vh;
+  z-index: 999;
+  position: sticky;
+  top: 0;
+  color: whitesmoke;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.681) 15%,
+    transparent 100%
+  );
+}
+.nav-logo img {
+  height: 6vh;
+}
+
+.nav-username {
+  padding: 1vh 2vh;
+}
+
+/*       custom-btn source : uiverse.io         */
+.custom-btn {
+  font-size: 2vh;
+  background: transparent;
+  border: none;
+  padding: 1em 1.5em;
+  text-transform: uppercase;
+  position: relative;
+  transition: 0.3s ease;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.custom-btn::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 0.5vh;
+  width: 0;
+  background-color: #dc1a28;
+  transition: 0.3s ease;
+}
+
+.custom-btn:hover {
+  color: white;
+  transition-delay: 0.3s;
+}
+
+.custom-btn:hover::before {
+  width: 100%;
+}
+
+.custom-btn::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 0;
+  width: 100%;
+  background-color: #dc1a28;
+  transition: 0.2s ease;
+  z-index: -1;
+}
+
+.custom-btn:hover::after {
+  height: 100%;
+  transition-delay: 0.2s;
+  color: aliceblue;
+}
+.custom-btn-mui,
+.custom-btn-mui {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+/*       custom-btn source : uiverse.io         */
+
+.profile-menu-container {
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.194);
+  color: white;
+  margin-bottom: calc(-100% - 2vh);
+  border-radius: 2vh;
+  font-size: 1.8vh;
+  height: 0px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+.show-profile-menu {
+  height: auto;
+  padding: 1vh 0;
+}
+.profile-menu-items {
+  padding: 1vh 2vh;
+  cursor: pointer;
+}
+
+.profile-menu-items:hover {
+  background-color: rgba(255, 255, 255, 0.294);
+}
+
+.nav-search {
+  width: 20vw !important;
+  color: white !important;
+  border-radius: 2vh !important;
+}
+
+.nav-search input::placeholder {
+  color: white;
+}
+.nav-search fieldset {
+  border-color: white !important;
+  border-radius: 2vh;
+}
+.nav-search-container {
+  display: flex;
+  align-items: center;
+  justify-self: center;
+}
+.search-icon {
+  cursor: pointer;
+  font-size: 3.8vh !important;
+}

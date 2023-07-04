@@ -1,23 +1,56 @@
 import logo from './logo.svg';
 import './App.css';
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import Home from './pages/Home';
+import Nav from './components/Nav';
+import './styles/components.css'
+import SignIn from './pages/SignIn';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import SignUp from './pages/SignUp';
+import Profile from './pages/Profile';
+import SingleMovie from './pages/SingleMovie';
+import VideoPlayer from './pages/VideoPlayer';
+import AllCards from './pages/AllCards';
+import About from './pages/About';
+import Search from './pages/Search';
+import PayCard from './components/PayCard';
+import Loader from './components/Loader';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+      <Router>
+        <Nav />
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/SignIn' element={<SignIn />} />
+          <Route path='/SignUp' element={<SignUp />} />
+          <Route path='/Profile' element={<Profile />} />
+          <Route path='/About' element={<About />} />
+          <Route path='/recently-watched' element={<AllCards path='recently-watched' />} />
+          <Route path='/wishlist' element={<AllCards path='wishlist' />} />
+          <Route path='/Search/:id' element={<Search />} />
+          <Route path='/VideoPlay/:id' element={<VideoPlayer />} />
+          <Route path='/Search' element={<Search />} />
+          <Route path='/SingleMovie/:id' element={<SingleMovie />} />
+        </Routes>
+        <PayCard />
+        <Loader />
+      </Router>
+
     </div>
   );
 }
