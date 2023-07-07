@@ -10,6 +10,7 @@ const VideoPlayer = () => {
     const [qualityChanged, setQualityChanged] = useState(-1);
     const [skipedIntro, setSkipIntro] = useState(false);
     const [videoData, setVideoData] = useState({})
+    const [videopaused, setVideoPaused] = useState(true)
     const [videos, setVideos] = useState([
         {
             type: 'low 360p',
@@ -98,32 +99,51 @@ const VideoPlayer = () => {
         addRecentlyWatched(id)
         let nav = document.getElementsByClassName('nav-container')[0]
         nav.style.display = 'none'
+        handleControlsShow()
         return () => {
             nav.style.display = 'flex'
         }
     }, [])
+    const mobile = window.innerWidth <= 720
     return (
         <div>
             <Box className='video-player-container' sx={{ height: '100vh', width: '100vw' }}>
                 <Box className='video-controls-visibility video-player-name'>
-                    Now Playing : <span className='video-name-span'>{videoData.title}</span> (sample video for real netflix experince)
+                    Now Playing : {mobile && <br />}<span className='video-name-span'>{videoData.title}</span>  {mobile && <br />}(sample video for real netflix experince)
                 </Box>
-                <video onPause={() => { setPauseIcon(true); console.log('video paused') }} onPlay={() => { setPauseIcon(false) }} onMouseEnter={handleControlsShow} onMouseLeave={handleControlsHide} style={{ width: '100%', maxHeight: '90vh' }} className='video-player' ref={videoRef} src={currentSrc} controls
+                <video
+                    onPause={() => { setPauseIcon(true); console.log('video paused'); handleControlsShow() }}
+                    onPlay={() => { setPauseIcon(false); handleControlsHide() }}
+                    onMouseEnter={handleControlsShow}
+                    onMouseLeave={handleControlsHide}
+                    // onClick={() => {
+                    //     if (videopaused) {
+                    //         handleControlsShow()
+                    //     } else {
+                    //         handleControlsHide()
+                    //     }
+                    //     setVideoPaused(!videopaused)
+                    // }}
+                    style={{ width: '100%', maxHeight: '90vh' }} className='video-player' ref={videoRef} src={currentSrc} controls
                     onLoadedMetadata={handleLoadedMetadata}>
                     Your browser does not support the video tag.
                 </video>
-                <Box onClick={handlePlay} id='pause-icon' className='video-player-pause-icon'><img src='/Images/PauseIcon.png'></img></Box>
-                <div onMouseEnter={handleControlsShow} className='video-player-buttons video-controls-visibility'>
-                    <select className='video-player-quality-options' id="quality" defaultValue={'high'} onChange={handleQualityChange}>
-                        <option value="low">Low 360p</option>
-                        <option value="medium">Medium 480p</option>
-                        <option value="high">High 720p</option>
-                    </select>
-                </div>
-                {!skipedIntro &&
-                    <Button onMouseEnter={handleControlsShow} className='auth-button video-player-buttons skip-intro-button video-controls-visibility' onClick={() => { handleTimeSkip('60'); setSkipIntro(true) }}>
-                        Skip Intro
-                    </Button>}
+                <Box onClick={handlePlay} id='pause-icon'
+                    className='video-player-pause-icon'>
+                    <img src='/Images/PauseIcon.png'></img></Box>
+                <Box className='video-player-buttons'>
+                    <div onMouseEnter={handleControlsShow} className='video-controls-visibility'>
+                        <select className='video-player-quality-options' id="quality" defaultValue={'high'} onChange={handleQualityChange}>
+                            <option value="low">Low 360p</option>
+                            <option value="medium">Medium 480p</option>
+                            <option value="high">High 720p</option>
+                        </select>
+                    </div>
+                    {!skipedIntro &&
+                        <Button onMouseEnter={handleControlsShow} className='auth-button skip-intro-button video-controls-visibility' onClick={() => { handleTimeSkip('60'); setSkipIntro(true) }}>
+                            Skip Intro
+                        </Button>}
+                </Box>
             </Box>
         </div>
     );

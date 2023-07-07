@@ -3,7 +3,7 @@ import '../styles/Home.css'
 import { Box, Button, OutlinedInput, TextField } from '@mui/material'
 import { getAllMovies } from '../apis/Home'
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-import { styles } from '../styles/styles';
+import { styles, theme } from '../styles/styles';
 import InfoIcon from '@mui/icons-material/Info';
 import MovieCard from '../components/MovieCard';
 import { getUser } from '../apis/Nav';
@@ -11,12 +11,13 @@ import { useNavigate } from 'react-router-dom';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { checkSubscription } from '../apis/auth';
+import { hideLoader, showLoader } from '../components/common_functions';
 export default function Home() {
     const [home_videos, setHomeVideos] = useState({})
     const [selectedVid, setSelectedVid] = useState({ name: 'videoUrl' })
     const [user, setUser] = useState(localStorage.getItem('userdet') && JSON.parse(localStorage.getItem('userdet')))
     const go = useNavigate()
-
+    const [cat_genrs, setCatGenrs] = useState([])
 
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -28,24 +29,39 @@ export default function Home() {
 
 
     useEffect(() => {
-        getAllMovies().then(res => {
-            const random = Math.floor(Math.random() * res.data.content.length)
-            setSelectedVid({ ...res.data.content[random] })
+        getAllMovies().then(async res => {
+
+            showLoader()
+            const random = Math.floor(Math.random() * res.content.length)
+            setSelectedVid({ ...res.content[random] })
 
 
             const set_data = {
-                top_rated: res.data.content,
-                popular: shuffleArray([...res.data.content]),
-                upcoming: shuffleArray([...res.data.content]),
+                top_rated: res.content,
+                popular: shuffleArray([...res.content]),
+                upcoming: shuffleArray([...res.content]),
             }
-            if (res.data.recentlyWatched) {
-                set_data.recently_watched = res.data.recentlyWatched
+            if (res.recentlyWatched) {
+                set_data.recently_watched = res.recentlyWatched
             }
-            if (res.data.wishlist) {
-                set_data.wishlist = res.data.wishlist
+            if (res.wishlist) {
+                set_data.wishlist = res.wishlist
             }
             setHomeVideos({ ...set_data })
 
+            const by_genre = {}
+            for await (let i of res.content) {
+                let geners = i.genre.split(', ')
+                for await (let j of geners) {
+                    if (!by_genre[j]) {
+                        by_genre[j] = []
+                    }
+                    by_genre[j].push(i)
+                }
+            }
+            console.log(by_genre)
+            setCatGenrs({ ...by_genre })
+            hideLoader()
         })
     }, [])
 
@@ -66,6 +82,7 @@ export default function Home() {
         else
             section_div.scrollLeft -= (window_width * 0.7)
     }
+    const mobile = window.innerWidth <= 720
     return (
         <Box>
             {user ? <>
@@ -74,14 +91,28 @@ export default function Home() {
                         <source type="video/mp4" />
                     </video>
                 </Box>
-                <Box sx={{ p: '0 10vh' }}>
+                <Box className='hero-container' sx={{
+                    p: '0 10vh',
+                    [theme.breakpoints.down('sm')]: {
+                        p: '2vw 3vw',
+                        width: 'calc(100% - 6vw)'
+                    },
+                }}>
                     <Box sx={{ color: 'whitesmoke' }}>
                         <Box sx={{
                             fontSize: '8vh',
                             color: 'white',
-                            width: '70vw'
+                            width: '70vw',
+                            [theme.breakpoints.down('sm')]: {
+                                width: '100%',
+                            },
                         }}>{selectedVid.title}</Box>
-                        <Box sx={{ width: '70vh' }}>
+                        <Box className='hero-movie-description' sx={{
+                            width: '70vh',
+                            [theme.breakpoints.down('sm')]: {
+                                width: '100%',
+                            },
+                        }}>
                             <Box sx={{ fontSize: '5vh' }}>{selectedVid.releaseDate && new Date(selectedVid.releaseDate).getFullYear()}</Box>
                             <Box className='three-line-clamp' sx={{ fontSize: '2.2vh' }}>{selectedVid.description}</Box>
                             <Box sx={{ mt: '4vh', display: 'flex', gap: '3vh' }}>
@@ -112,13 +143,13 @@ export default function Home() {
                 <Box sx={{ background: '#000000b3', p: '3vh 5vh', width: 'calc(100vw - 10vh - 15px)', position: 'relative', zIndex: 1 }}>
                     <Box sx={{ fontSize: '3vh' }}>Popular Movies</Box>
                     <Box sx={{ display: 'flex' }}  >
-                        <Button onClick={() => { move(0, 'left') }} className='cards-left-icon'><ChevronLeftIcon /></Button>
+                        {!mobile && <Button onClick={() => { move(0, 'left') }} className='cards-left-icon'><ChevronLeftIcon /></Button>}
                         <Box id='home-popular-list' className='home-card-list card-section'>
                             {home_videos.popular && home_videos.popular.map((movie, ind) => {
                                 return <MovieCard key={ind} data={movie} />
                             })}
                         </Box>
-                        <Button onClick={() => { move(0, 'right') }} className='cards-right-icon'><ChevronRightIcon /></Button>
+                        {!mobile && <Button onClick={() => { move(0, 'right') }} className='cards-right-icon'><ChevronRightIcon /></Button>}
                     </Box>
                 </Box>
             </Box>
@@ -126,13 +157,13 @@ export default function Home() {
                 <Box sx={{ background: '#000000b3', p: '3vh 5vh', width: 'calc(100vw - 10vh - 15px)', position: 'relative', zIndex: 1 }}>
                     <Box sx={{ fontSize: '3vh' }}>Upcoming New Movies</Box>
                     <Box sx={{ display: 'flex' }} >
-                        <Button onClick={() => { move(1, 'left') }} className='cards-left-icon'><ChevronLeftIcon /></Button>
+                        {!mobile && <Button onClick={() => { move(1, 'left') }} className='cards-left-icon'><ChevronLeftIcon /></Button>}
                         <Box id='home-upcoming-new-list' className='home-card-list card-section'>
                             {home_videos.upcoming && home_videos.upcoming.map((movie, ind) => {
                                 return <MovieCard key={ind} data={movie} />
                             })}
                         </Box>
-                        <Button onClick={() => { move(1, 'right') }} className='cards-right-icon'><ChevronRightIcon /></Button>
+                        {!mobile && <Button onClick={() => { move(1, 'right') }} className='cards-right-icon'><ChevronRightIcon /></Button>}
                     </Box>
                 </Box>
             </Box>
@@ -140,13 +171,13 @@ export default function Home() {
                 <Box sx={{ background: '#000000b3', p: '3vh 5vh', width: 'calc(100vw - 10vh - 15px)', position: 'relative', zIndex: 1 }}>
                     <Box sx={{ fontSize: '3vh' }}>Top Rated Movies</Box>
                     <Box sx={{ display: 'flex' }} >
-                        <Button onClick={() => { move(2, 'left') }} className='cards-left-icon'><ChevronLeftIcon /></Button>
+                        {!mobile && <Button onClick={() => { move(2, 'left') }} className='cards-left-icon'><ChevronLeftIcon /></Button>}
                         <Box id='home-top-rated-list' className='home-card-list card-section'>
                             {home_videos.top_rated && home_videos.top_rated.map((movie, ind) => {
                                 return <MovieCard key={ind} data={movie} />
                             })}
                         </Box>
-                        <Button onClick={() => { move(2, 'right') }} className='cards-right-icon'><ChevronRightIcon /></Button>
+                        {!mobile && <Button onClick={() => { move(2, 'right') }} className='cards-right-icon'><ChevronRightIcon /></Button>}
                     </Box>
                 </Box>
             </Box>
@@ -154,13 +185,13 @@ export default function Home() {
                 <Box sx={{ background: '#000000b3', p: '3vh 5vh', width: 'calc(100vw - 10vh - 15px)', position: 'relative', zIndex: 1 }}>
                     <Box sx={{ fontSize: '3vh' }}>Recently Watched Movies</Box>
                     <Box sx={{ display: 'flex' }} >
-                        <Button onClick={() => { move(3, 'left') }} className='cards-left-icon'><ChevronLeftIcon /></Button>
+                        {!mobile && <Button onClick={() => { move(3, 'left') }} className='cards-left-icon'><ChevronLeftIcon /></Button>}
                         <Box id='home-recently-watched-list' className='home-card-list card-section'>
                             {home_videos.recently_watched.map((movie, ind) => {
                                 return <MovieCard key={ind} data={movie} />
                             })}
                         </Box>
-                        <Button onClick={() => { move(3, 'right') }} className='cards-right-icon'><ChevronRightIcon /></Button>
+                        {!mobile && <Button onClick={() => { move(3, 'right') }} className='cards-right-icon'><ChevronRightIcon /></Button>}
                     </Box>
                 </Box>
             </Box>}
@@ -168,16 +199,33 @@ export default function Home() {
                 <Box sx={{ background: '#000000b3', p: '3vh 5vh', width: 'calc(100vw - 10vh - 15px)', position: 'relative', zIndex: 1 }}>
                     <Box sx={{ fontSize: '3vh' }}>Wishlist Movies</Box>
                     <Box sx={{ display: 'flex' }} >
-                        <Button onClick={() => { move(4, 'left') }} className='cards-left-icon'><ChevronLeftIcon /></Button>
+                        {!mobile && <Button onClick={() => { move(4, 'left') }} className='cards-left-icon'><ChevronLeftIcon /></Button>}
                         <Box id='home-wishlist-list' className='home-card-list card-section'>
                             {home_videos.wishlist.map((movie, ind) => {
                                 return <MovieCard key={ind} data={movie} />
                             })}
                         </Box>
-                        <Button onClick={() => { move(4, 'right') }} className='cards-right-icon'><ChevronRightIcon /></Button>
+                        {!mobile && <Button onClick={() => { move(4, 'right') }} className='cards-right-icon'><ChevronRightIcon /></Button>}
                     </Box>
                 </Box>
             </Box>}
+            {Object.keys(cat_genrs).map(cat => {
+                return <Box className='home-wishlist-container'>
+                    <Box sx={{ background: '#000000b3', p: '3vh 5vh', width: 'calc(100vw - 10vh - 15px)', position: 'relative', zIndex: 1 }}>
+                        <Box sx={{ fontSize: '3vh' }}>{cat}</Box>
+                        <Box sx={{ display: 'flex' }} >
+                            {!mobile && <Button onClick={() => { move(2, 'left') }} className='cards-left-icon'><ChevronLeftIcon /></Button>}
+                            <Box id='home-top-rated-list' className='home-card-list card-section'>
+                                {cat_genrs[cat].map((movie, ind) => {
+                                    return <MovieCard key={ind} data={movie} />
+                                })}
+                            </Box>
+                            {!mobile && <Button onClick={() => { move(2, 'right') }} className='cards-right-icon'><ChevronRightIcon /></Button>}
+                        </Box>
+                    </Box>
+                </Box>
+            })}
+
         </Box>
     )
 }

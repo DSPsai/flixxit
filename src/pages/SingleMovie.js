@@ -7,8 +7,9 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import 'react-circular-progressbar/dist/styles.css';
 import '../styles/singlemovie.css'
 import { getRating, getWish, postRating, postWish } from '../apis/SingleMovie';
-import { styles } from '../styles/styles';
+import { styles, theme } from '../styles/styles';
 import { checkSubscription } from '../apis/auth';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 export default function SingleMovie() {
     const [data, setData] = useState({})
     const [ratingStyles, setRatingStyles] = useState({
@@ -25,6 +26,7 @@ export default function SingleMovie() {
     }
     const [liked, setLiked] = useState(false)
     const [wished, setWished] = useState(false)
+    const [downed, setDowned] = useState(false)
 
 
     const setRatingsColors = (dat) => {
@@ -59,7 +61,7 @@ export default function SingleMovie() {
             setData({ ...dat })
             setRatingsColors(dat)
             //fetch ratings
-            getRating({ id: dat._id }).then(rat => setLiked(rat[dat._id]))
+            getRating({ id: dat._id }).then(rat => rat[dat._id] != undefined ? rat[dat._id] == true ? setLiked(true) : setDowned(true) : console.log('asd'))
             getWish({ id: dat._id }).then(rat => setWished(rat[dat._id]))
         })
 
@@ -76,27 +78,38 @@ export default function SingleMovie() {
                 i.classList.toggle('animate-jelly')
             }
         }, 1000)
-
-
     }, [])
+
+
+    const mobile = window.innerWidth <= 720
     return (
         <Box id='scrolle' sx={{ minHeight: '100vh', p: '10vh 0vh' }}>
             <Box sx={{
-                // maxWidth: '1000px',
                 color: 'white',
                 px: '10vw'
             }}>
-                <Box sx={{ display: 'flex', }}>
+                <Box sx={{
+                    display: 'flex',
+                    [theme.breakpoints.down('sm')]: {
+                        flexFlow: 'column'
+                    },
+                }}>
                     <Box class="single-movie-img" sx={{ width: '45%', }}>
                         <Box class="single-movie-img-reflection-top">
                             <Box class="single-movie-img-reflection">
-                                <Box class="single-movie-img-reflection-bottom">
+                                {!mobile ? <Box class="single-movie-img-reflection-bottom">
                                     <img src={data.poster} />
-                                </Box>
+                                </Box> : <img src={data.poster} />}
                             </Box>
                         </Box>
                     </Box>
-                    <Box sx={{ width: '55%', pt: '10vh' }}>
+                    <Box sx={{
+                        width: '55%', pt: '10vh',
+                        [theme.breakpoints.down('sm')]: {
+                            width: '80vw',
+                            pt: '2vh'
+                        },
+                    }}>
                         <Box sx={{ fontSize: '5vh', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Box>
                                 {data.title}
@@ -143,14 +156,47 @@ export default function SingleMovie() {
                                 <Box>{(data.rating * 10)}% of people Liked {data.title}</Box>
                             </Box>
                             <Box className='single-movie-icons' id='single-movie-like'>
-                                <ThumbUpIcon sx={{ fontSize: '4vh', color: liked ? 'rgb(0, 200, 83)' : 'white' }} onClick={() => {
-                                    postRating({ id: data._id, rating: !liked }).then(res => {
+                                {(!liked && !downed) ? <><ThumbUpIcon sx={{ fontSize: '4vh', color: liked ? 'rgb(0, 200, 83)' : downed ? 'red' : 'white' }} onClick={() => {
+                                    postRating({ id: data._id, rating: true, cat: 'rating' }).then(res => {
                                         if (res) {
-                                            setLiked(!liked)
+                                            setLiked(true)
                                         }
                                     })
                                     animate('single-movie-like')
-                                }} />
+                                }} />&emsp;
+                                    <ThumbDownIcon sx={{ fontSize: '4vh', color: liked ? 'rgb(0, 200, 83)' : downed ? 'red' : 'white' }} onClick={() => {
+                                        postRating({ id: data._id, rating: true, cat: 'downvote' }).then(res => {
+                                            if (res) {
+                                                setDowned(true)
+                                            }
+                                        })
+                                        animate('single-movie-like')
+                                    }} />
+                                </> : liked ? <><Box sx={{ color: 'green' }}>
+                                    You Have Liked this Movie
+                                </Box>&emsp;<Button onClick={() => {
+                                    postRating({ id: data._id, rating: false, cat: 'rating' }).then(res => {
+                                        if (res) {
+                                            if (downed) {
+                                                setDowned(false)
+                                            } else if (liked)
+                                                setLiked(false)
+                                        }
+                                    })
+                                    animate('single-movie-like')
+                                }} sx={styles.secondary_button}> Remove </Button></> : downed ? <><Box sx={{ color: 'red' }}>
+                                    You Have Down Voted this Movie
+                                </Box>&emsp;<Button onClick={() => {
+                                    postRating({ id: data._id, rating: false, cat: 'downvote' }).then(res => {
+                                        if (res) {
+                                            if (downed) {
+                                                setDowned(false)
+                                            } else if (liked)
+                                                setLiked(false)
+                                        }
+                                    })
+                                    animate('single-movie-like')
+                                }} sx={styles.secondary_button}> Remove </Button></> : <></>}
                             </Box>
                         </Box>
                         <Box sx={{ mt: '3vh' }}>

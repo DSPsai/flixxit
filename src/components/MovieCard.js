@@ -1,12 +1,12 @@
 import { Box } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export default function MovieCard({ data }) {
     const go = useNavigate()
     return (
         <Box onClick={() => go('/SingleMovie/' + data._id)} className='movie-card-container anim-card'>
-            <img className='anim-img' src={data.poster} />
+            {<img loading="lazy" className='anim-img' src={data.poster} />}
             <Box className='anim-textBox'>
                 <Box className='movie-card-data'>
                     <Box className='movie-card-data-item movie-card-name'>{data.title}</Box>
@@ -18,9 +18,3 @@ export default function MovieCard({ data }) {
         </Box>
     )
 }
-
-{/* <Box className='movie-card-container'>
-<Box sx={{ backgroundImage: 'url(' + data.poster + ')' }} className='movie-poster-container'>
-    <Box className='movie-card-name'>{data.title}</Box>
-</Box>
-</Box> */}

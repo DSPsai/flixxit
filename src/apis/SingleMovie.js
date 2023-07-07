@@ -8,7 +8,7 @@ const paths = {
     recentlyWatched: '/users/recently-watched'
 }
 
-const postRating = async ({ id }) => {
+const postRating = async ({ id, rating, cat }) => {
     showLoader()
     return await axios({
         method: "post",
@@ -17,7 +17,9 @@ const postRating = async ({ id }) => {
             Authorization: localStorage.getItem("access")
         },
         data: {
-            id: id
+            id: id,
+            rating: rating,
+            cat: cat
         }
     }).then(response => {
         hideLoader()

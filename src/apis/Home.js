@@ -5,20 +5,23 @@ import { toast } from 'react-toastify'
 const paths = {
     all_movies: '/content'
 }
-var allMovieData = []
+var allMovieData = undefined
 
 // All Movies Fetch
 const getAllMovies = async () => {
     showLoader()
-    const user = localStorage.getItem('access')
+    if (allMovieData != undefined) {
+        hideLoader()
+        return allMovieData
+    } const user = localStorage.getItem('access')
     var headers = {}
     if (user) {
         headers.Authorization = user
     }
     return await axios.get(process.env.REACT_APP_BACKEND_URL + paths.all_movies, { headers: headers }).then(res => {
         hideLoader()
-        allMovieData = res.data.content
-        return res
+        allMovieData = res.data
+        return res.data
     }).catch(er => {
         hideLoader()
         toast.error(er.response.data)
@@ -28,7 +31,7 @@ const getAllMovies = async () => {
 
 const getSingleMovie = async (id) => {
     showLoader()
-    const movie = allMovieData.find((o, i) => { return o._id == id })
+    const movie = allMovieData.content.find((o, i) => { return o._id == id })
     if (movie) {
         hideLoader()
         return movie
@@ -45,14 +48,17 @@ const getSingleMovie = async (id) => {
 }
 const getRecentlyWatched = async (param) => {
     showLoader()
-    const user = localStorage.getItem('access')
+    if (allMovieData != undefined) {
+        hideLoader()
+        return allMovieData[param]
+    } const user = localStorage.getItem('access')
     var headers = {}
     if (user) {
         headers.Authorization = user
     }
     return await axios.get(process.env.REACT_APP_BACKEND_URL + paths.all_movies, { headers: headers }).then(res => {
         hideLoader()
-        allMovieData = res.data.content
+        allMovieData = res.data
         return res.data[param]
     }).catch(er => {
         hideLoader()

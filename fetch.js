@@ -13,9 +13,9 @@ const headers = {
     Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiMjE3OTZmOWI3NzIwOTMzZWU2ZTY2MjkyOGU4NjVhMCIsInN1YiI6IjY0OWE2YjNlYTZkZGNiMDBhZTY3YzAwZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.S1AcQnGQy4j96pLc31lklHz2hH6T1LX0t4hivAGUX88'
 }
 const sample_videos = [
-    '/Videos/spiderman_720.mp4',
+    '/Videos/spiderman_720p.mp4',
     '/Videos/extraction_2_720p.mp4',
-    '/Videos/got_720.mp4',
+    '/Videos/got_720p.mp4',
 ]
 const getPage = async (page) => {
     var movies = {}

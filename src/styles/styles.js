@@ -1,3 +1,18 @@
+
+import { createTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
+const theme = createTheme({
+    breakpoints: {
+        values: {
+            xs: 0, // Configure the value for xs breakpoint
+            sm: 600,
+            md: 960,
+            lg: 1280,
+            xl: 1920,
+        },
+    },
+});
+
 const styles = {
     primary_button: {
         backgroundColor: 'white',
@@ -40,4 +55,4 @@ const styles = {
     }
 }
 
-export { styles };
+export { styles, theme };

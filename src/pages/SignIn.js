@@ -4,10 +4,9 @@ import '../styles/signin.css'
 import { toast } from 'react-toastify'
 import { postSignin } from '../apis/auth'
 import { useNavigate } from 'react-router-dom'
+import { theme } from '../styles/styles'
 export default function SignIn() {
     const go = useNavigate()
-
-
 
     useEffect(() => {
         let nav = document.getElementsByClassName('nav-container')[0]
@@ -16,6 +15,7 @@ export default function SignIn() {
             nav.style.display = 'flex'
         }
     }, [])
+
     const handle_signin = () => {
         const email = document.getElementById('email').value
         const pass = document.getElementById('pass').value
@@ -37,7 +37,10 @@ export default function SignIn() {
         <Box sx={{
             background: "url('/Images/hero.jpg')",
             p: '5vh 10vh',
-            minHeight: '100vh'
+            minHeight: '100vh',
+            [theme.breakpoints.down('sm')]: {
+                padding: '2vw',
+            },
         }}>
             <Box className='signin-nav-logo'>
                 <img src='/Images/logo.png' />
@@ -51,10 +54,6 @@ export default function SignIn() {
 
                     <Box sx={{ mb: '1vh' }}><Button onClick={() => { handle_signin() }} className='auth-button'>SignIn</Button></Box>
 
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: '5vh' }}>
-                        <Box><Checkbox defaultChecked /> Remember me</Box>
-                        <Box>Need help?</Box>
-                    </Box>
 
                     <Box sx={{ color: '#c3c3c3', mb: '3vh' }}>New to Flixxit?&ensp;
                         <span onClick={() => { go('/SignUp') }} style={{ color: 'white', fontSize: '2vh', fontWeight: '600', cursor: 'pointer' }}>

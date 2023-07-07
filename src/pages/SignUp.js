@@ -4,6 +4,7 @@ import '../styles/signin.css'
 import { toast } from 'react-toastify'
 import { postSignin, postSignup } from '../apis/auth'
 import { useNavigate } from 'react-router-dom'
+import { theme } from '../styles/styles'
 export default function SignUp() {
     const go = useNavigate()
 
@@ -39,7 +40,10 @@ export default function SignUp() {
         <Box sx={{
             background: "url('/Images/hero.jpg')",
             p: '5vh 10vh',
-            minHeight: '100vh'
+            minHeight: '100vh',
+            [theme.breakpoints.down('sm')]: {
+                padding: '2vw',
+            },
         }}>
             <Box className='signin-nav-logo'>
                 <img src='/Images/logo.png' />
@@ -53,11 +57,6 @@ export default function SignUp() {
                     <Box sx={{ mb: '5vh' }}><TextField id='name' fullWidth label='Full Name' className='signin-textfield' placeholder='Full Name' /></Box>
 
                     <Box sx={{ mb: '1vh' }}><Button onClick={() => { handle_signin() }} className='auth-button'>SignIn</Button></Box>
-
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: '5vh' }}>
-                        <Box><Checkbox defaultChecked /> Remember me</Box>
-                        <Box>Need help?</Box>
-                    </Box>
 
                     <Box sx={{ color: '#c3c3c3', mb: '3vh' }}>Already on Flixxit?&ensp;
                         <span onClick={() => { go('/SignIn') }} style={{ color: 'white', fontSize: '2vh', fontWeight: '600', cursor: 'pointer' }}>
